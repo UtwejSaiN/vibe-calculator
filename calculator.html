@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazing Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .calculator {
+            background: rgba(26, 26, 46, 0.95);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+
+        .title {
+            text-align: center;
+            color: #00d4ff;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            }
+            to {
+                text-shadow: 0 0 25px rgba(0, 212, 255, 0.8);
+            }
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #a0a0c0;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .display {
+            background: #16213e;
+            border: none;
+            border-radius: 15px;
+            color: #ffffff;
+            font-size: 36px;
+            font-weight: bold;
+            padding: 25px;
+            text-align: right;
+            margin-bottom: 25px;
+            width: 100%;
+            box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.3);
+            letter-spacing: 2px;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            border: none;
+            border-radius: 12px;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .number {
+            background: linear-gradient(135deg, #0f3460, #1a4d7a);
+            color: #ffffff;
+        }
+
+        .number:hover {
+            background: linear-gradient(135deg, #1a4d7a, #0f3460);
+        }
+
+        .operator {
+            background: linear-gradient(135deg, #e94560, #ff6b88);
+            color: #ffffff;
+        }
+
+        .operator:hover {
+            background: linear-gradient(135deg, #ff6b88, #e94560);
+        }
+
+        .special {
+            background: linear-gradient(135deg, #533483, #7045af);
+            color: #ffffff;
+        }
+
+        .special:hover {
+            background: linear-gradient(135deg, #7045af, #533483);
+        }
+
+        .equals {
+            background: linear-gradient(135deg, #00d4ff, #00a8cc);
+            color: #1a1a2e;
+            font-size: 28px;
+        }
+
+        .equals:hover {
+            background: linear-gradient(135deg, #00a8cc, #00d4ff);
+        }
+
+        .zero {
+            grid-column: span 2;
+        }
+
+        .footer {
+            text-align: center;
+            color: #00d4ff;
+            font-size: 12px;
+            margin-top: 20px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="title">✨ Amazing Calculator ✨</div>
+        <div class="subtitle">Where Math Meets Aesthetic</div>
+
+        <input type="text" id="display" class="display" value="0" readonly>
+
+        <div class="buttons">
+            <button class="special" onclick="clearDisplay()">C</button>
+            <button class="special" onclick="backspace()">⌫</button>
+            <button class="special" onclick="appendOperator('%')">%</button>
+            <button class="operator" onclick="appendOperator('/')">÷</button>
+
+            <button class="number" onclick="appendNumber('7')">7</button>
+            <button class="number" onclick="appendNumber('8')">8</button>
+            <button class="number" onclick="appendNumber('9')">9</button>
+            <button class="operator" onclick="appendOperator('*')">×</button>
+
+            <button class="number" onclick="appendNumber('4')">4</button>
+            <button class="number" onclick="appendNumber('5')">5</button>
+            <button class="number" onclick="appendNumber('6')">6</button>
+            <button class="operator" onclick="appendOperator('-')">−</button>
+
+            <button class="number" onclick="appendNumber('1')">1</button>
+            <button class="number" onclick="appendNumber('2')">2</button>
+            <button class="number" onclick="appendNumber('3')">3</button>
+            <button class="operator" onclick="appendOperator('+')">+</button>
+
+            <button class="number zero" onclick="appendNumber('0')">0</button>
+            <button class="number" onclick="appendNumber('.')">.</button>
+            <button class="equals" onclick="calculate()">=</button>
+        </div>
+
+        <div class="footer">Vibe Calculator v1.0</div>
+    </div>
+
+    <script>
+        let currentInput = '0';
+        let operator = '';
+        let firstNumber = null;
+
+        function updateDisplay() {
+            document.getElementById('display').value = currentInput;
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            operator = '';
+            firstNumber = null;
+            updateDisplay();
+        }
+
+        function backspace() {
+            if (currentInput.length > 1) {
+                currentInput = currentInput.slice(0, -1);
+            } else {
+                currentInput = '0';
+            }
+            updateDisplay();
+        }
+
+        function appendNumber(num) {
+            if (currentInput === '0' || currentInput === 'Error') {
+                currentInput = num;
+            } else {
+                // Prevent multiple decimals
+                if (num === '.' && currentInput.includes('.')) {
+                    return;
+                }
+                currentInput += num;
+            }
+            updateDisplay();
+        }
+
+        function appendOperator(op) {
+            if (firstNumber !== null && operator && currentInput !== 'Error') {
+                calculate();
+            }
+            firstNumber = parseFloat(currentInput);
+            operator = op;
+            currentInput = '0';
+        }
+
+        function calculate() {
+            if (firstNumber === null || !operator) {
+                return;
+            }
+
+            const secondNumber = parseFloat(currentInput);
+            let result;
+
+            try {
+                switch(operator) {
+                    case '+':
+                        result = firstNumber + secondNumber;
+                        break;
+                    case '-':
+                        result = firstNumber - secondNumber;
+                        break;
+                    case '*':
+                        result = firstNumber * secondNumber;
+                        break;
+                    case '/':
+                        if (secondNumber === 0) {
+                            throw new Error('Division by zero');
+                        }
+                        result = firstNumber / secondNumber;
+                        break;
+                    case '%':
+                        result = firstNumber % secondNumber;
+                        break;
+                    default:
+                        return;
+                }
+
+                // Format result to avoid floating point issues
+                currentInput = Number.isInteger(result) ? result.toString() : result.toFixed(8).replace(/\.?0+$/, '');
+                firstNumber = null;
+                operator = '';
+                updateDisplay();
+            } catch (error) {
+                currentInput = 'Error';
+                firstNumber = null;
+                operator = '';
+                updateDisplay();
+            }
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+
+            if (key >= '0' && key <= '9') {
+                appendNumber(key);
+            } else if (key === '.') {
+                appendNumber('.');
+            } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+                appendOperator(key);
+            } else if (key === '%') {
+                appendOperator('%');
+            } else if (key === 'Enter' || key === '=') {
+                calculate();
+            } else if (key === 'Escape' || key === 'c' || key === 'C') {
+                clearDisplay();
+            } else if (key === 'Backspace') {
+                backspace();
+            }
+        });
+    </script>
+</body>
+</html>
